@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Factoring Integers</title>
+  <meta charset="UTF-8">
+  <style type="text/css">
+  a {text-decoration: none; color: blue; font-weight: bold; cursor: pointer;}
+  </style>
+  <script>
+  function $(a){
+    a = String(a);
+    return document.getElementById(a);
+  }
+  
+  function factorAll(){
+    var numbers = [];
+    var curr;
+    try {
+      for (var i = 1; true; i++){
+        curr = Number($(i).value);
+        if (!(isNaN(curr) || curr <= 0 || Math.round(curr) != curr)){
+          numbers.push(curr);
+        }
+      }
+    } catch (e){}
+    
+    if (numbers.length == 0){
+      $("nofactor").innerHTML = "";
+      $("factored").innerHTML = "";
+      return true;
+    }
+    
+    if (numbers.length == 1){
+      $("nofactor").innerHTML = numbers[0];
+      $("factored").innerHTML = factor(numbers[0]);
+      return true;
+    }
+    
+    var f = numbers[0];
+    for (var i = 1; i < numbers.length; i++){
+      f = gcd(f, numbers[i]);
+    }
+    
+    var toWrite1 = "";
+    var toWrite2 = "";
+    if (f != 1){
+      toWrite1 += f+" * ("+(numbers[0]/f);
+      toWrite2 += factor(f)+" * ("+factor(numbers[0]/f);
+      for (var i = 1; i < numbers.length; i++){
+        toWrite1 += "&ensp;+&ensp;"+numbers[i]/f;
+        toWrite2 += "&ensp;+&ensp;"+factor(numbers[i]/f);
+      }
+      toWrite1 += ")";
+      toWrite2 += ")";
+      $("nofactor").innerHTML = toWrite1;
+      $("factored").innerHTML = toWrite2;
+    } else {
+      toWrite1 += numbers[0]/f;
+      toWrite2 += factor(numbers[0]/f);
+      for (var i = 1; i < numbers.length; i++){
+        toWrite1 += "&ensp;+&ensp;"+numbers[i]/f;
+        toWrite2 += "&ensp;+&ensp;"+factor(numbers[i]/f);
+      }
+      $("nofactor").innerHTML = toWrite1;
+      $("factored").innerHTML = toWrite2;
+    }
+  }
+  
+  function factor(a){
+    a = Number(a);
+    if (isNaN(a) || a <= 0 || Math.round(a) != a)return ["&nbsp;"];
+    
+    var factors = [];
+    var sqrt = Math.sqrt(a);
+    var i = 2;
+    while (i <= sqrt){
+      if (a % i == 0){
+        factors.push(i);
+        a /= i;
+        sqrt = Math.sqrt(a);
+      } else {
+        if (i != 2)i = i+2;
+        else i = i+1;
+      }
+    }
+    factors.push(a);
+    
+    var factors2 = [];
+    var power = 1;
+    for (var i = 0; i < factors.length; i++){
+      if (factors[i] == factors[i+1])power++;
+      else if (power == 1)factors2.push(factors[i]);
+      else {
+        factors2.push(factors[i] + "<span style=\"font-size: 0;\">^</span><sup>" + power + "</sup>");
+        power = 1;
+      }
+    }
+    
+    return factors2.join(" * ");
+  }
+  
+  function gcd(a, b){
+    if (b == 0)return a;
+    else return gcd(b, a % b);
+  }
+  
+  var currId = 2;
+  function addNumber(){
+    var text = document.createTextNode(" + ");
+    $("add").appendChild(text);
+    var input = document.createElement("input");
+    input.setAttribute("type", "text");
+    input.setAttribute("id", currId);
+    input.onkeyup = function (){factorAll();};
+    input.setAttribute("autocomplete", "off");
+    $("add").appendChild(input);
+    currId++;
+    factorAll();
+  }
+  
+  function remNumber(){
+    var children = $("add").childNodes;
+    if (children.length >= 2){
+      $("add").removeChild(children[children.length-1]);
+      $("add").removeChild(children[children.length-1]);
+      currId--;
+      factorAll();
+    }
+  }
+  </script>
+</head>
+
+<body>
+  <p>
+    <input type="text" id="1" onkeyup="factorAll();" autocomplete="off">
+    <span id="add"></span>
+    (<a onclick="addNumber()">+</a>|<a onclick="remNumber()">−</a>) 
+  </p>
+  <p style="white-space: nowrap;">
+    = <span id="nofactor"></span>
+  </p>
+  <p style="white-space: nowrap;">
+    = <span id="factored"></span>
+  </p>
+</body>
+
+</html>
