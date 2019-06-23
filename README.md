@@ -1,6 +1,6 @@
 # Factoring Integers
 
-Run it at http://musiclifephilosophy.com/codes/factor/
+Run it at https://xin-xin.me/code/factor/
 
 This simple Javascript app factors all numbers <= [9007199254740991](http://stackoverflow.com/questions/307179/what-is-javascripts-highest-integer-value-that-a-number-can-go-to-without-losin).
 
